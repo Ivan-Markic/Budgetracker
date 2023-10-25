@@ -1,0 +1,12 @@
+{
+  "home": "Home",
+  "sign_in": "Sign In",
+  "dont_have_an_account": "Don't have an account?",
+  "sign_up": "Sign Up",
+  "already_have_an_account": "Already have an account?",
+  "username": "Username",
+  "password": "Password",
+  "first_name": "First Name",
+  "last_name": "Last Name",
+  "file_type_not_supported": "File type not supported",
+}

@@ -22,3 +22,13 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+# Frontend
+# Ignore Node.js and React build artifacts
+/budgetracker-frontend/node_modules/
+/budgetracker-frontend/build/
+/budgetracker-frontend/.env
+/budgetracker-frontend/.env.local
+/budgetracker-frontend/.env.development
+/budgetracker-frontend/.env.production
+/budgetracker-frontend/.env.test
