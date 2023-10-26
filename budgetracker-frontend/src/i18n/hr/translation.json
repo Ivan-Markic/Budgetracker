@@ -9,5 +9,8 @@
     "first_name": "Ime",
     "last_name": "Prezime",
     "file_type_not_supported": "Tip datoteke nije podržan",
-    "upload_profile_picture": "Učitaj profilnu sliku"
+    "upload_profile_picture": "Učitaj profilnu sliku",
+    "balance_title": "Stanje računa",
+    "view_tips": "Savjeti",
+    "filters_title": "Filteri grafikona"
   }

@@ -1,4 +1,3 @@
-import * as React from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
@@ -11,7 +10,6 @@ import Deposits from "./Deposits";
 import Transactions from "./Transactions";
 import AppBar from "./AppBar";
 import Copyright from "./Copyright";
-import Drawer from "./Drawer";
 import ApiService from "./../service/ApiService";
 import { useEffect, useState } from "react";
 
@@ -31,21 +29,11 @@ export default function Dashboard() {
     });
   }, []); // Include userId as a dependency if it's needed
 
-  const [open, setOpen] = React.useState(true);
-  const toggleDrawer = () => {
-    setOpen(!open);
-  };
-
   return (
     <ThemeProvider theme={defaultTheme}>
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
-        <AppBar
-          open={open}
-          toggleDrawer={toggleDrawer}
-          profilePictureUrl={userProfilePicture ?? ""}
-        />
-        <Drawer open={open} toggleDrawer={toggleDrawer} />
+        <AppBar profilePictureUrl={userProfilePicture ?? ""} />
         <Box
           component="main"
           sx={{

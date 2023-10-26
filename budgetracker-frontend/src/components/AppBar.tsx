@@ -1,22 +1,22 @@
-import MuiAppBar from "@mui/material/AppBar";
+import MuiAppBar, { AppBarProps } from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import MenuIcon from "@mui/icons-material/Menu";
 import { styled } from "@mui/material/styles";
 import { Avatar } from "@mui/material";
+import Drawer from "./Drawer";
+import React from "react";
 
-interface AppBarProps {
-  open?: boolean;
-  toggleDrawer: () => void;
-  profilePictureUrl?: string;
+interface ExtendedAppBarProps extends AppBarProps {
+  open: boolean;
 }
 
 const drawerWidth: number = 240;
 
 const StyledAppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
-})<AppBarProps>(({ theme, open }) => ({
+})<ExtendedAppBarProps>(({ theme, open }) => ({
   zIndex: theme.zIndex.drawer + 1,
   transition: theme.transitions.create(["width", "margin"], {
     easing: theme.transitions.easing.sharp,
@@ -32,42 +32,49 @@ const StyledAppBar = styled(MuiAppBar, {
   }),
 }));
 
-function AppBar({ open, toggleDrawer, profilePictureUrl }: AppBarProps) {
+function AppBar({ profilePictureUrl }: { profilePictureUrl: string }) {
+  const [open, setOpen] = React.useState(true);
+  const toggleDrawer = () => {
+    setOpen(!open);
+  };
   return (
-    <StyledAppBar position="absolute" open={open} toggleDrawer={toggleDrawer}>
-      <Toolbar
-        sx={{
-          pr: "24px", // keep right padding when the drawer is closed
-        }}
-      >
-        <IconButton
-          edge="start"
-          color="inherit"
-          aria-label="open drawer"
-          onClick={toggleDrawer}
+    <div className="appBar">
+      <StyledAppBar position="absolute" open={open}>
+        <Toolbar
           sx={{
-            marginRight: "36px",
-            ...(open && { display: "none" }),
+            pr: "24px", // keep right padding when the drawer is closed
           }}
         >
-          <MenuIcon />
-        </IconButton>
-        <Typography
-          component="h1"
-          variant="h6"
-          color="inherit"
-          noWrap
-          sx={{ flexGrow: 1 }}
-        >
-          Budgetracker
-        </Typography>
-        <IconButton color="inherit">
-          {profilePictureUrl && (
-            <Avatar alt="User Avatar" src={profilePictureUrl} />
-          )}
-        </IconButton>
-      </Toolbar>
-    </StyledAppBar>
+          <IconButton
+            edge="start"
+            color="inherit"
+            aria-label="open drawer"
+            onClick={toggleDrawer}
+            sx={{
+              marginRight: "36px",
+              ...(open && { display: "none" }),
+            }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography
+            component="h1"
+            variant="h6"
+            color="inherit"
+            noWrap
+            sx={{ flexGrow: 1 }}
+          >
+            Budgetracker
+          </Typography>
+          <IconButton color="inherit">
+            {profilePictureUrl && (
+              <Avatar alt="User Avatar" src={profilePictureUrl} />
+            )}
+          </IconButton>
+        </Toolbar>
+      </StyledAppBar>
+      <Drawer open={open} toggleDrawer={toggleDrawer} />
+    </div>
   );
 }
 
