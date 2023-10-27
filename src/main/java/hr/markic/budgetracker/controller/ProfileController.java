@@ -18,6 +18,7 @@ import java.util.Optional;
 public class ProfileController {
 
     private final UserService userService;
+    private final JwtService jwtService;
 
     @PostMapping(value = "/picture", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadProfilePicture(
@@ -25,7 +26,6 @@ public class ProfileController {
             @RequestHeader("Authorization") String userToken
     ) {
         userToken = userToken.replace("Bearer ", "");
-        JwtService jwtService = new JwtService();
         String username = jwtService.extractUsername(userToken);
         Optional<User> userOptional = userService.findUserByUsername(username);
 

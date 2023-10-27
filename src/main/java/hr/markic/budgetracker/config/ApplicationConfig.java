@@ -1,6 +1,7 @@
 package hr.markic.budgetracker.config;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
+import hr.markic.budgetracker.repository.AccountRepository;
 import hr.markic.budgetracker.repository.LogEntryRepository;
 import hr.markic.budgetracker.repository.UserRepository;
 import hr.markic.budgetracker.service.LogEntryService;
@@ -27,6 +28,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class ApplicationConfig {
 
     private final UserRepository userRepository;
+    private final AccountRepository accountRepository;
 
     @Bean
     public UserDetailsService userDetailsService() {
@@ -35,8 +37,8 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public UserService userService(UserRepository userRepository) {
-        return new UserServiceImpl(userRepository);
+    public UserService userService() {
+        return new UserServiceImpl(userRepository, accountRepository);
     }
 
     @Bean

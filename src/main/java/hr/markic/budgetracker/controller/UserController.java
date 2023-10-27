@@ -1,5 +1,7 @@
 package hr.markic.budgetracker.controller;
 
+import hr.markic.budgetracker.config.JwtService;
+import hr.markic.budgetracker.domain.Account;
 import hr.markic.budgetracker.domain.User;
 import hr.markic.budgetracker.service.UserService;
 import lombok.AllArgsConstructor;
@@ -9,6 +11,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -16,6 +19,7 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final JwtService jwtService;
 
     @PostMapping(value = {"/create", ""})
     public ResponseEntity<String> createUser(@RequestBody User user) {
@@ -24,12 +28,9 @@ public class UserController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<String> updateUser(@RequestBody User user) {
-        User updatedUser = userService.updateUser(user);
-        if (updatedUser == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok("User successfully updated");
+    public ResponseEntity<User> updateUser(@RequestBody User user) {
+        userService.updateUser(user);
+        return ResponseEntity.ok(user);
     }
 
     @DeleteMapping(value = "/delete")
@@ -40,13 +41,23 @@ public class UserController {
         return ResponseEntity.notFound().build();
     }
 
-    @GetMapping(value = "/get")
-    public ResponseEntity<User> getUser(@RequestParam Long userId) {
-        User user = userService.getUserById(userId);
-        if (user != null) {
-            return ResponseEntity.ok(user);
+    @GetMapping(value = "/get/jwt")
+    public ResponseEntity<User> getUserByJwt(
+            @RequestHeader("Authorization") String userToken
+    ) {
+        if (userToken.length() < 7) {
+            return ResponseEntity.unprocessableEntity().build();
         }
-        return ResponseEntity.notFound().build();
+        userToken = userToken.substring(7);
+        String username = jwtService.extractUsername(userToken);
+        Optional<User> optionalUser = userService.findUserByUsername(username);
+        return optionalUser.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping(value = "/get")
+    public ResponseEntity<User> getUser(@RequestParam String username) {
+        Optional<User> optionalUser = userService.findUserByUsername(username);
+        return optionalUser.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @Secured("ROLE_ADMIN")

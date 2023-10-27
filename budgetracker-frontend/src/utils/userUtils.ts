@@ -1,6 +1,7 @@
 import { Account } from "../model/Account";
 import { Role } from "../model/Role";
 import { User } from "../model/User";
+import ApiService from "../service/ApiService";
 
 // Create empty user object
 export const emptyUser: User = {
@@ -37,4 +38,16 @@ export function createUserFromResponse(
     accounts,
     language,
   };
+}
+
+export function getUserRole() {
+  const userRole = ApiService.getUserByJwt()
+    .then((user) => {
+      return user.role;
+    })
+    .catch(() => {
+      return "";
+    });
+  // return the current user roles
+  return userRole;
 }

@@ -8,13 +8,13 @@ function preventDefault(event: React.MouseEvent) {
   event.preventDefault();
 }
 
-export default function Deposits() {
+export default function Deposits({ balance }: { balance: number }) {
   const { t } = useTranslation();
   return (
     <React.Fragment>
       <Title>{t("balance_title")}</Title>
       <Typography component="p" variant="h4">
-        $3,024.00
+        € {balance}
       </Typography>
       <div>
         <Link color="primary" href="#" onClick={preventDefault}>

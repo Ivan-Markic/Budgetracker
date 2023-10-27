@@ -12,20 +12,50 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useTranslation } from "react-i18next";
 import Copyright from "./Copyright";
+import AuthService from "../service/AuthService";
+import AlertDialog from "./AlertDialog";
 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
 export default function SignIn() {
+  const { t } = useTranslation();
+
+  const [open, setOpen] = React.useState(false);
+  const [error, setError] = React.useState("");
+
+  const handleAlertDialogClose = () => {
+    setError("");
+    setOpen(false);
+  };
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("username"),
-      password: data.get("password"),
-    });
+    const username = data.get("username") as string;
+    const password = data.get("password") as string;
+
+    if (!username || !password) {
+      setError(t("username_password_required"));
+      setOpen(true);
+      return;
+    }
+
+    AuthService.loginUser(username, password)
+      .then((response) => {
+        window.location.href = "/";
+      })
+      .catch((error) => {
+        // pop up error message
+
+        if (error.message === "Network Error") {
+          setError(t("network_error"));
+        } else {
+          setError(t("sign_in_error"));
+        }
+        setOpen(true);
+      });
   };
-  const { t } = useTranslation();
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -94,6 +124,11 @@ export default function SignIn() {
           </Box>
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
+        <AlertDialog
+          open={open}
+          message={error}
+          handleClose={handleAlertDialogClose}
+        />
       </Container>
     </ThemeProvider>
   );

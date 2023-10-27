@@ -9,7 +9,7 @@ const API_BASE_URL = "http://localhost:8080/api/v1"; // Adjust the URL to your A
 
 class ApiService {
   // JWT token
-  static jwtToken = ""; // Initialize this with your token when the user logs in
+  static jwtToken = window.localStorage.getItem("token") ?? ""; // Initialize this with your token when the user logs in
 
   // Set the JWT token
   static setJwtToken(token: string) {
@@ -24,12 +24,23 @@ class ApiService {
       },
     });
   }
-  static updateUser(user: User) {
-    return axios.post(`${API_BASE_URL}/user/update`, user, {
+  static async updateUser(user: User) {
+    const response = await axios.put(`${API_BASE_URL}/user/update`, user, {
       headers: {
         Authorization: `Bearer ${ApiService.jwtToken}`,
       },
     });
+    return createUserFromResponse(
+      response.data.firstName,
+      response.data.lastName,
+      response.data.username,
+      response.data.password,
+      response.data.role,
+      response.data.language,
+      response.data.id,
+      response.data.accounts,
+      createimageUrl(response.data.profilePicture)
+    );
   }
 
   static deleteUser(userId: number) {
@@ -40,9 +51,28 @@ class ApiService {
     });
   }
 
-  static async getUser(userId: number): Promise<User> {
+  static async getUser(username: string): Promise<User> {
     const response = await axios.get(`${API_BASE_URL}/user/get`, {
-      params: { userId },
+      params: { username },
+      headers: {
+        Authorization: `Bearer ${ApiService.jwtToken}`,
+      },
+    });
+    return createUserFromResponse(
+      response.data.firstName,
+      response.data.lastName,
+      response.data.username,
+      response.data.password,
+      response.data.role,
+      response.data.language,
+      response.data.id,
+      response.data.accounts,
+      createimageUrl(response.data.profilePicture)
+    );
+  }
+
+  static async getUserByJwt() {
+    const response = await axios.get(`${API_BASE_URL}/user/get/jwt`, {
       headers: {
         Authorization: `Bearer ${ApiService.jwtToken}`,
       },
@@ -69,16 +99,18 @@ class ApiService {
   }
 
   // Transaction endpoints
-  static createTransaction(transaction: Transaction) {
+  static createTransaction(transaction: Transaction, accountId: number) {
     return axios.post(`${API_BASE_URL}/transaction/create`, transaction, {
+      params: { accountId },
       headers: {
         Authorization: `Bearer ${ApiService.jwtToken}`,
       },
     });
   }
 
-  static updateTransaction(transaction: Transaction) {
-    return axios.post(`${API_BASE_URL}/transaction/update`, transaction, {
+  static updateTransaction(transaction: Transaction, accountId: number) {
+    return axios.put(`${API_BASE_URL}/transaction/update`, transaction, {
+      params: { accountId },
       headers: {
         Authorization: `Bearer ${ApiService.jwtToken}`,
       },
@@ -86,14 +118,12 @@ class ApiService {
   }
 
   static deleteTransaction(transactionId: number) {
-    return axios.delete(
-      `${API_BASE_URL}/transaction/delete?transactionId=${transactionId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${ApiService.jwtToken}`,
-        },
-      }
-    );
+    return axios.delete(`${API_BASE_URL}/transaction/delete`, {
+      params: { transactionId },
+      headers: {
+        Authorization: `Bearer ${ApiService.jwtToken}`,
+      },
+    });
   }
 
   static getTransaction(transactionId: number) {
@@ -116,12 +146,17 @@ class ApiService {
   }
 
   // Account endpoints
-  static createAccount(account: Account) {
-    return axios.post(`${API_BASE_URL}/account/create`, account, {
-      headers: {
-        Authorization: `Bearer ${ApiService.jwtToken}`,
-      },
-    });
+  static async createAccount(account: Account): Promise<Account> {
+    const response = await axios.post(
+      `${API_BASE_URL}/account/create`,
+      account,
+      {
+        headers: {
+          Authorization: `Bearer ${ApiService.jwtToken}`,
+        },
+      }
+    );
+    return response.data;
   }
 
   static updateAccount(account: Account) {
@@ -143,12 +178,14 @@ class ApiService {
     );
   }
 
-  static getAccount(accountId: number) {
-    return axios.get(`${API_BASE_URL}/account?accountId=${accountId}`, {
+  static async getAccountById(accountId: number): Promise<Account> {
+    const response = await axios.get(`${API_BASE_URL}/account/get`, {
+      params: { accountId },
       headers: {
         Authorization: `Bearer ${ApiService.jwtToken}`,
       },
     });
+    return response.data;
   }
 
   static getAllAccounts() {

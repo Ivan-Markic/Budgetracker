@@ -5,10 +5,12 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
-import AuthRoute from "./components/AuthRoute";
+import { AuthRoute } from "./components/AuthRoute";
 import Layout from "./components/Layout";
 import "./i18n/config";
 import "./index.css";
+import AccountView from "./components/AccountView";
+import HomeView from "./components/HomeView";
 
 const Routing = () => {
   return (
@@ -20,15 +22,23 @@ const Routing = () => {
           <Route
             path="/"
             element={
-              <AuthRoute allowedRoles={["user", "admin"]}>
-                <App />
+              <AuthRoute allowedRoles={["USER", "ADMIN"]}>
+                <HomeView />
+              </AuthRoute>
+            }
+          />
+          <Route
+            path="/account/:accoundId"
+            element={
+              <AuthRoute allowedRoles={["USER", "ADMIN"]}>
+                <AccountView />
               </AuthRoute>
             }
           />
           <Route
             path="/profile"
             element={
-              <AuthRoute allowedRoles={["user", "admin"]}>
+              <AuthRoute allowedRoles={["USER", "ADMIN"]}>
                 <App />
               </AuthRoute>
             }
@@ -36,7 +46,7 @@ const Routing = () => {
           <Route
             path="/adminPanel"
             element={
-              <AuthRoute allowedRoles={["admin"]}>
+              <AuthRoute allowedRoles={["ADMIN"]}>
                 <App />
               </AuthRoute>
             }

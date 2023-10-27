@@ -23,9 +23,8 @@ export default function Dashboard() {
 
   useEffect(() => {
     // Fetch the user's profile picture when the component mounts
-    ApiService.getUser(1).then((user) => {
+    ApiService.getUser("admin").then((user) => {
       setUserProfilePicture(user.profilePicture as string);
-      console.log(user);
     });
   }, []); // Include userId as a dependency if it's needed
 
@@ -59,7 +58,7 @@ export default function Dashboard() {
                     height: 240,
                   }}
                 >
-                  <Chart />
+                  {/* <Chart transactions={[]} /> */}
                 </Paper>
               </Grid>
               {/* Recent Deposits */}
@@ -72,13 +71,13 @@ export default function Dashboard() {
                     height: 240,
                   }}
                 >
-                  <Deposits />
+                  <Deposits balance={5} />
                 </Paper>
               </Grid>
               {/* Recent Orders */}
               <Grid item xs={12}>
                 <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-                  <Transactions transactions={[]} />
+                  {/* <Transactions account={account} /> */}
                 </Paper>
               </Grid>
             </Grid>

@@ -1,5 +1,6 @@
 package hr.markic.budgetracker.service;
 
+import hr.markic.budgetracker.domain.Account;
 import hr.markic.budgetracker.domain.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -19,6 +20,6 @@ public interface UserService extends UserDetailsService {
 
     List<User> getAllUsers();
 
-
+    User saveUserWithNewAccount(User user, Account newAccount);
 
 }

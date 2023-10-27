@@ -18,3 +18,45 @@ export function createimageUrl(profilePictureData: string): string {
   // Create an Object URL from the blob
   return URL.createObjectURL(blob);
 }
+
+export function createBase64Image(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+      const base64String = event.target ? (event.target.result as string) : "";
+      resolve(base64String);
+    };
+
+    reader.onerror = (error) => {
+      reject(error);
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
+
+export async function convertImageUrlToBase64(
+  imageUrl: string
+): Promise<string> {
+  const response = await new Promise<string>((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.responseType = "blob";
+    xhr.onload = () => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        const base64StringWithoutPrefix = base64String.substring(
+          base64String.indexOf(",") + 1
+        );
+        resolve(base64StringWithoutPrefix);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(xhr.response);
+    };
+    xhr.onerror = reject;
+    xhr.open("GET", imageUrl);
+    xhr.send();
+  });
+  return response;
+}

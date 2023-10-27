@@ -9,30 +9,40 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import Title from "./Title";
+import { Transaction } from "../model/Transaction";
+import { Container } from "@mui/material";
+import { Account } from "../model/Account";
+import { useEffect, useState } from "react";
 
-// Generate Sales Data
-function createData(time: string, amount?: number) {
-  return { time, amount };
-}
-
-const data = [
-  createData("00:00", 0),
-  createData("03:00", 300),
-  createData("06:00", 600),
-  createData("09:00", 800),
-  createData("12:00", 1500),
-  createData("15:00", 2000),
-  createData("18:00", 2400),
-  createData("21:00", 2400),
-  createData("24:00", undefined),
-];
-
-export default function Chart() {
+export default function Chart({ account }: { account: Account }) {
   const theme = useTheme();
+  const [transactions] = useState<Transaction[]>(account.transactions);
+  const [data, setData] = useState<{ time: string; amount: number }[]>([]);
+
+  useEffect(() => {
+    // Calculate the new balance
+    let balance = account.balance ?? 0;
+    const newData = transactions.map((transaction) => {
+      balance -= transaction.amount ?? 0;
+      return {
+        time:
+          new Date(transaction.date ?? 0).getHours() +
+          ":" +
+          new Date(transaction.date ?? 0).getMinutes(),
+        amount: balance,
+      };
+    });
+
+    setData(newData);
+  }, [account.balance, transactions]);
+
+  if (data.length === 0) {
+    return <Container>No transactions to display</Container>;
+  }
 
   return (
     <React.Fragment>
-      <Title>Today</Title>
+      <Title>Prikaz transakcija</Title>
       <ResponsiveContainer>
         <LineChart
           data={data}
@@ -61,7 +71,7 @@ export default function Chart() {
                 ...theme.typography.body1,
               }}
             >
-              Sales ($)
+              Stanje Računa
             </Label>
           </YAxis>
           <Line

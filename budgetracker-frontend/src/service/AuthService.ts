@@ -1,6 +1,7 @@
 import axios from "axios";
 import ApiService from "./ApiService";
 import { User } from "../model/User";
+import { createBase64Image } from "../utils/imageUtils";
 
 const API_BASE_URL = "http://localhost:8080/api/v1/auth";
 
@@ -14,22 +15,29 @@ class AuthService {
     if (response.status === 200) {
       const token = response.data.token; // Assuming your token field is named "token" in the response
       ApiService.setJwtToken(token); // Save the JWT token
+      //save it to local storage
+      console.log("Saving token to local storage");
+      window.localStorage.setItem("token", token);
+
+      console.log("Logged in successfully");
     }
     return response;
   }
 
   // Register endpoint
   static registerUser(user: User, image: File | null) {
-    axios.post(`${API_BASE_URL}/register`, user, {}).then((response) => {
-      ApiService.setJwtToken(response.data.token);
-      this.loginUser(user.username, user.password).then((response) => {
-        if (response.status === 200) {
-          ApiService.setJwtToken(response.data.token);
-          if (image) {
-            ApiService.uploadProfilePicture(image);
+    createBase64Image(image!!).then((base64String) => {
+      base64String = base64String.replace(/^data:image\/\w+;base64,/, "");
+      user.profilePicture = base64String;
+      axios.post(`${API_BASE_URL}/register`, user, {}).then((response) => {
+        ApiService.setJwtToken(response.data.token);
+        this.loginUser(user.username, user.password).then((response) => {
+          if (response.status === 200) {
+            ApiService.setJwtToken(response.data.token);
+            window.localStorage.setItem("token", response.data.token);
+            window.location.href = "/"; // Redirect to home page
           }
-          window.location.href = "/"; // Redirect to home page
-        }
+        });
       });
     });
   }

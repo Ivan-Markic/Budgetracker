@@ -1,7 +1,10 @@
 package hr.markic.budgetracker.service;
 
+import hr.markic.budgetracker.domain.Account;
 import hr.markic.budgetracker.domain.User;
+import hr.markic.budgetracker.repository.AccountRepository;
 import hr.markic.budgetracker.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,6 +18,7 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final AccountRepository accountRepository;
 
     @Override
     public long getCount() {
@@ -60,5 +64,20 @@ public class UserServiceImpl implements UserService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
+
+    @Override
+    @Transactional
+    public User saveUserWithNewAccount(User user, Account newAccount) {
+        // Ensure the new account is associated with the user
+
+        // Add the new account to the user's list of accounts
+        user.getAccounts().add(newAccount);
+
+        // Save the new account
+        accountRepository.save(newAccount);
+
+        // Save the updated user, which will also update the user's list of accounts
+        return userRepository.save(user);
     }
 }

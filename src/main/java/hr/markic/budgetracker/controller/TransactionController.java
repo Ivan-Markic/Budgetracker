@@ -1,6 +1,8 @@
 package hr.markic.budgetracker.controller;
 
+import hr.markic.budgetracker.domain.Account;
 import hr.markic.budgetracker.domain.Transaction;
+import hr.markic.budgetracker.service.AccountService;
 import hr.markic.budgetracker.service.TransactionService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,15 +17,21 @@ import java.util.List;
 public class TransactionController {
 
     private final TransactionService transactionService;
+    private final AccountService accountService;
 
     @PostMapping("/create")
-    public ResponseEntity<Transaction> createTransaction(@RequestBody Transaction transaction) {
+    public ResponseEntity<Transaction> createTransaction(@RequestBody Transaction transaction,
+    @RequestParam Long accountId) {
+        Account account = accountService.getAccountById(accountId);
+        transaction.setAccount(account);
         Transaction createdTransaction = transactionService.createTransaction(transaction);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdTransaction);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Transaction> updateTransaction(@RequestBody Transaction transaction) {
+    public ResponseEntity<Transaction> updateTransaction(@RequestBody Transaction transaction, @RequestParam Long accountId) {
+        Account account = accountService.getAccountById(accountId);
+        transaction.setAccount(account);
         Transaction updatedTransaction = transactionService.updateTransaction(transaction);
         if (updatedTransaction == null) {
             return ResponseEntity.notFound().build();
