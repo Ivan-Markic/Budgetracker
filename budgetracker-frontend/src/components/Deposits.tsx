@@ -4,12 +4,13 @@ import Typography from "@mui/material/Typography";
 import Title from "./Title";
 import { useTranslation } from "react-i18next";
 
-function preventDefault(event: React.MouseEvent) {
-  event.preventDefault();
-}
-
 export default function Deposits({ balance }: { balance: number }) {
   const { t } = useTranslation();
+
+  function showTips(event: React.MouseEvent) {
+    alert(t("tips"));
+  }
+
   return (
     <React.Fragment>
       <Title>{t("balance_title")}</Title>
@@ -17,7 +18,7 @@ export default function Deposits({ balance }: { balance: number }) {
         € {balance}
       </Typography>
       <div>
-        <Link color="primary" href="#" onClick={preventDefault}>
+        <Link color="primary" href="" onClick={showTips}>
           {t("view_tips")}
         </Link>
       </div>

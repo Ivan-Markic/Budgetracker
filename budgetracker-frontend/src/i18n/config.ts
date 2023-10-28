@@ -15,15 +15,15 @@ i18n
     debug: true,
     fallbackLng: "en",
     resources: {
-      // en: {
-      //   translation: translationEn,
-      // },
+      en: {
+        translation: translationEn,
+      },
       hr: {
         translation: translationHr,
       },
-      // ru: {
-      //   translation: translationRu,
-      // },
+      ru: {
+        translation: translationRu,
+      },
     },
   });
 

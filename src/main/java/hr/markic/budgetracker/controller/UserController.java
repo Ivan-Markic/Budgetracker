@@ -2,6 +2,7 @@ package hr.markic.budgetracker.controller;
 
 import hr.markic.budgetracker.config.JwtService;
 import hr.markic.budgetracker.domain.Account;
+import hr.markic.budgetracker.domain.Role;
 import hr.markic.budgetracker.domain.User;
 import hr.markic.budgetracker.service.UserService;
 import lombok.AllArgsConstructor;
@@ -34,9 +35,18 @@ public class UserController {
     }
 
     @DeleteMapping(value = "/delete")
-    public ResponseEntity<String> deleteUser(@RequestParam Long userId) {
-        if (userService.deleteUser(userId)) {
-            return ResponseEntity.noContent().build();
+    public ResponseEntity<String> deleteUser(@RequestParam Long userId, @RequestHeader("Authorization") String userToken) {
+        userToken = userToken.substring(7);
+        String username = jwtService.extractUsername(userToken);
+        Optional<User> optionalUser = userService.findUserByUsername(username);
+        User userToDelete = userService.getUserById(userId);
+        if (optionalUser.isPresent()) {
+            if (userToDelete.getUsername().equals(optionalUser.get().getUsername()) || optionalUser.get().getRole() == Role.ADMIN) {
+                if (userService.deleteUser(userId)) {
+                    return ResponseEntity.noContent().build();
+                }
+            }
+            return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.notFound().build();
     }
@@ -63,7 +73,8 @@ public class UserController {
     @Secured("ROLE_ADMIN")
     @GetMapping(value = "/all")
     public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.getAllUsers();
+        List<User> users = userService.getAllUsers().stream().filter((user) ->
+             user.getRole() == Role.USER).toList();
         return ResponseEntity.ok(users);
     }
 }

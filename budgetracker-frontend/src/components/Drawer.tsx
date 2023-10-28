@@ -5,7 +5,7 @@ import IconButton from "@mui/material/IconButton";
 import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import { mainListItems, ListOfFilters } from "./ListItems"; // Import your list items component
+import { MainListItems } from "./DrawerOptions"; // Import your list items component
 
 const drawerWidth = 240;
 
@@ -58,9 +58,8 @@ function Drawer({
       </Toolbar>
       <Divider />
       <List component="nav">
-        {mainListItems}
+        <MainListItems />
         <Divider sx={{ my: 1 }} />
-        <ListOfFilters />
       </List>
     </StyledDrawer>
   );

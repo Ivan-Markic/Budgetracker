@@ -26,20 +26,35 @@ class AuthService {
 
   // Register endpoint
   static registerUser(user: User, image: File | null) {
-    createBase64Image(image!!).then((base64String) => {
-      base64String = base64String.replace(/^data:image\/\w+;base64,/, "");
-      user.profilePicture = base64String;
-      axios.post(`${API_BASE_URL}/register`, user, {}).then((response) => {
-        ApiService.setJwtToken(response.data.token);
-        this.loginUser(user.username, user.password).then((response) => {
-          if (response.status === 200) {
-            ApiService.setJwtToken(response.data.token);
-            window.localStorage.setItem("token", response.data.token);
-            window.location.href = "/"; // Redirect to home page
-          }
-        });
+    if (image) {
+      createBase64Image(image!!).then((base64String) => {
+        base64String = base64String.replace(/^data:image\/\w+;base64,/, "");
+        user.profilePicture = base64String;
+        this.sendRegistrationRequest(user);
+      });
+    } else {
+      this.sendRegistrationRequest(user);
+    }
+  }
+
+  private static sendRegistrationRequest(user: User) {
+    axios.post(`${API_BASE_URL}/register`, user, {}).then((response) => {
+      ApiService.setJwtToken(response.data.token);
+      this.loginUser(user.username, user.password).then((response) => {
+        if (response.status === 200) {
+          ApiService.setJwtToken(response.data.token);
+          window.localStorage.setItem("token", response.data.token);
+          window.location.href = "/"; // Redirect to home page
+        }
       });
     });
+  }
+
+  // Logout endpoint
+  static logoutUser() {
+    ApiService.removeJwtToken();
+    window.localStorage.removeItem("token");
+    window.location.href = "/login"; // Redirect to login page
   }
 }
 

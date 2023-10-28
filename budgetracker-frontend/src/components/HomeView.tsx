@@ -24,16 +24,20 @@ import { Account } from "../model/Account";
 import { User } from "../model/User";
 import { convertImageUrlToBase64 } from "../utils/imageUtils";
 import { Delete } from "@mui/icons-material";
+import { useTranslation } from "react-i18next";
 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
 const HomeView = () => {
   const [user, setUser] = useState<User | null>(null);
+  const [profilePicture, setProfilePicture] = useState<string>("");
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [newAccountName, setNewAccountName] = useState("");
   const [newAccountBalance, setNewAccountBalance] = useState("");
+
+  const { t } = useTranslation();
 
   useEffect(() => {
     //Fetch the user's accounts when the component mounts
@@ -41,6 +45,7 @@ const HomeView = () => {
       .then((user) => {
         setAccounts(user.accounts);
         setUser(user);
+        setProfilePicture(user.profilePicture as string);
       })
       .catch(() => {});
   }, []);
@@ -81,7 +86,7 @@ const HomeView = () => {
 
   const handleDeleteAccount = (accountId: number) => {
     // Show a confirmation dialog (optional)
-    if (window.confirm("Are you sure you want to delete this account?")) {
+    if (window.confirm(t("confirm_delete_account"))) {
       // Call an API or perform the delete operation
       ApiService.deleteAccount(accountId).then(() => {
         // After successful deletion, you can refresh the account list or take other actions.
@@ -95,7 +100,7 @@ const HomeView = () => {
     <ThemeProvider theme={defaultTheme}>
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
-        <AppBar profilePictureUrl="" />
+        <AppBar profilePictureUrl={profilePicture} />
         <Box
           component="main"
           sx={{
@@ -115,14 +120,14 @@ const HomeView = () => {
               align="center"
               sx={{ mt: 8 }}
             >
-              Accounts
+              {t("accounts")}
             </Typography>
             <Button
               variant="contained"
               color="primary"
               onClick={handleAddAccount}
             >
-              Add Account
+              {t("add_account")}
             </Button>
 
             <List>
@@ -138,7 +143,9 @@ const HomeView = () => {
                   <ListItemButton>
                     <ListItemText
                       primary={account.name}
-                      secondary={`Balance: $${account.balance} | Transactions: ${account.transactions.length}`}
+                      secondary={`${t("balance")}: €${account.balance} | ${t(
+                        "transactions"
+                      )}: ${account.transactions.length}`}
                     />
                     <IconButton
                       onClick={(e) => {
@@ -156,12 +163,12 @@ const HomeView = () => {
 
             <Dialog open={dialogOpen} onClose={handleCloseDialog}>
               <DialogContentText align="center" sx={{ mt: 2 }}>
-                Add New Account
+                {t("add_account")}
               </DialogContentText>
               <DialogContent>
                 <TextField
                   id="account-name"
-                  label="Account Name"
+                  label={t("account_name")}
                   variant="outlined"
                   type="text"
                   value={newAccountName}
@@ -171,7 +178,7 @@ const HomeView = () => {
                 <br />
                 <TextField
                   id="initial-balance"
-                  label="Initial Balance"
+                  label={t("initial_balance")}
                   variant="outlined"
                   type="number"
                   value={newAccountBalance}
@@ -180,10 +187,10 @@ const HomeView = () => {
               </DialogContent>
               <DialogActions>
                 <Button onClick={handleCloseDialog} color="primary">
-                  Cancel
+                  {t("cancel")}
                 </Button>
                 <Button onClick={handleSaveAccount} color="primary">
-                  Save
+                  {t("save")}
                 </Button>
               </DialogActions>
             </Dialog>

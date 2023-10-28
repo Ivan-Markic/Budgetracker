@@ -93,7 +93,7 @@ function SignUp() {
       AuthService.registerUser(user, image);
     } else {
       // Display an error message or prevent submission
-      alert("Form is not valid. Please fill in all required fields.");
+      alert(t("form_invalid"));
     }
   };
   const { t } = useTranslation();

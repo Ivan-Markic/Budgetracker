@@ -13,9 +13,11 @@ import { Transaction } from "../model/Transaction";
 import { Container } from "@mui/material";
 import { Account } from "../model/Account";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 export default function Chart({ account }: { account: Account }) {
   const theme = useTheme();
+  const { t } = useTranslation();
   const [transactions] = useState<Transaction[]>(account.transactions);
   const [data, setData] = useState<{ time: string; amount: number }[]>([]);
 
@@ -23,7 +25,8 @@ export default function Chart({ account }: { account: Account }) {
     // Calculate the new balance
     let balance = account.balance ?? 0;
     const newData = transactions.map((transaction) => {
-      balance -= transaction.amount ?? 0;
+      balance += transaction.amount ?? 0;
+      console.log(balance);
       return {
         time:
           new Date(transaction.date ?? 0).getHours() +
@@ -34,15 +37,15 @@ export default function Chart({ account }: { account: Account }) {
     });
 
     setData(newData);
-  }, [account.balance, transactions]);
+  }, [account, transactions]);
 
   if (data.length === 0) {
-    return <Container>No transactions to display</Container>;
+    return <Container>{t("no_transactions_to_display")}</Container>;
   }
 
   return (
     <React.Fragment>
-      <Title>Prikaz transakcija</Title>
+      <Title>{t("show_of_transactions")}</Title>
       <ResponsiveContainer>
         <LineChart
           data={data}
@@ -71,7 +74,7 @@ export default function Chart({ account }: { account: Account }) {
                 ...theme.typography.body1,
               }}
             >
-              Stanje Računa
+              {t("amount")}
             </Label>
           </YAxis>
           <Line

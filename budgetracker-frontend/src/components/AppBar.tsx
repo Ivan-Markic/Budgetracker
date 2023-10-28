@@ -7,6 +7,7 @@ import { styled } from "@mui/material/styles";
 import { Avatar } from "@mui/material";
 import Drawer from "./Drawer";
 import React from "react";
+import LanguageSelector from "./LanguageSelector";
 
 interface ExtendedAppBarProps extends AppBarProps {
   open: boolean;
@@ -66,7 +67,11 @@ function AppBar({ profilePictureUrl }: { profilePictureUrl: string }) {
           >
             Budgetracker
           </Typography>
-          <IconButton color="inherit">
+          <LanguageSelector />
+          <IconButton
+            color="inherit"
+            onClick={() => (window.location.href = "/")}
+          >
             {profilePictureUrl && (
               <Avatar alt="User Avatar" src={profilePictureUrl} />
             )}

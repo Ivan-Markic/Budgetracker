@@ -1,7 +1,6 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
@@ -11,6 +10,8 @@ import "./i18n/config";
 import "./index.css";
 import AccountView from "./components/AccountView";
 import HomeView from "./components/HomeView";
+import { AdminPanel } from "./components/AdminPanel";
+import App from "./App";
 
 const Routing = () => {
   return (
@@ -36,21 +37,17 @@ const Routing = () => {
             }
           />
           <Route
-            path="/profile"
-            element={
-              <AuthRoute allowedRoles={["USER", "ADMIN"]}>
-                <App />
-              </AuthRoute>
-            }
-          />
-          <Route
             path="/adminPanel"
             element={
               <AuthRoute allowedRoles={["ADMIN"]}>
-                <App />
+                <AdminPanel />
               </AuthRoute>
             }
           />
+          {/* Define a route for the 404 page */}
+          <Route path="*" element={<App />} />
+
+          {/* Use Redirect to send users to the 404 page for unmatched routes */}
         </Routes>
       </BrowserRouter>
     </Layout>

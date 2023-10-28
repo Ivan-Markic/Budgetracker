@@ -4,9 +4,9 @@ import { useTranslation } from "react-i18next";
 const languages: {
   [key: string]: { nativeName: string };
 } = {
-  // en: { nativeName: "English" },
+  en: { nativeName: "English" },
   hr: { nativeName: "Hrvatski" },
-  // ru: { nativeName: "Русский" },
+  ru: { nativeName: "Русский" },
 };
 
 const LanguageSelector = () => {

@@ -16,6 +16,11 @@ class ApiService {
     ApiService.jwtToken = token;
   }
 
+  // Remove the JWT token
+  static removeJwtToken() {
+    ApiService.jwtToken = "";
+  }
+
   // User endpoints
   static createUser(user: User) {
     return axios.post(`${API_BASE_URL}/user/create`, user, {
@@ -43,12 +48,14 @@ class ApiService {
     );
   }
 
-  static deleteUser(userId: number) {
-    return axios.delete(`${API_BASE_URL}/user/delete?userId=${userId}`, {
+  static async deleteUser(userId: number) {
+    const response = await axios.delete(`${API_BASE_URL}/user/delete`, {
+      params: { userId },
       headers: {
         Authorization: `Bearer ${ApiService.jwtToken}`,
       },
     });
+    return response.data;
   }
 
   static async getUser(username: string): Promise<User> {
@@ -90,12 +97,14 @@ class ApiService {
     );
   }
 
-  static getAllUsers() {
-    return axios.get(`${API_BASE_URL}/user/all`, {
+  static async getAllUsers(): Promise<User[]> {
+    const response = await axios.get(`${API_BASE_URL}/user/all`, {
       headers: {
         Authorization: `Bearer ${ApiService.jwtToken}`,
       },
     });
+
+    return response.data;
   }
 
   // Transaction endpoints

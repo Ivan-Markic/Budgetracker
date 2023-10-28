@@ -15,28 +15,48 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Account } from "../model/Account";
 import { LoadingPage } from "./LoadingPage";
+import { useTranslation } from "react-i18next";
 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
 export default function AccountView() {
-  const [userProfilePicture] = useState<string | null>(null);
+  const { t } = useTranslation();
+
+  const [profilePicture, setProfilePicture] = useState<string>("");
   const [account, setAccount] = useState<Account | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  // create balanace state which will be counted from transactions
+  const [balance, setBalance] = useState<number>(0);
 
   const { accoundId } = useParams();
   if (!accoundId) {
-    throw new Error("No account ID provided");
+    alert(t("account_id_required"));
+    window.location.href = "/";
   }
-  // Now, accountId contains the ID from the URL, e.g., '3' in http://localhost:3000/account/3
 
   useEffect(() => {
     // Fetch the user's profile picture when the component mounts
-    ApiService.getAccountById(parseFloat(accoundId)).then((account) => {
-      setAccount(account);
-      setLoading(false);
-    });
-  }, [accoundId]); // Include accountId as a dependency if it's needed
+    ApiService.getAccountById(parseFloat(accoundId!!))
+      .then((account) => {
+        // Calculate the balance from the account's initial balance and its transactions
+        ApiService.getUserByJwt().then((user) => {
+          setProfilePicture(user.profilePicture as string);
+          let calculatedBalance = account.balance ?? 0;
+          account.transactions?.forEach((transaction) => {
+            calculatedBalance += transaction.amount ?? 0;
+          });
+          setAccount(account);
+          setBalance(calculatedBalance);
+          setProfilePicture(user.profilePicture as string);
+          setLoading(false);
+        });
+      })
+      .catch(() => {
+        alert("account_not_found");
+        window.location.href = "/";
+      });
+  }, [accoundId]);
   if (loading) {
     return <LoadingPage />;
   }
@@ -45,7 +65,7 @@ export default function AccountView() {
     <ThemeProvider theme={defaultTheme}>
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
-        <AppBar profilePictureUrl={userProfilePicture ?? ""} />
+        <AppBar profilePictureUrl={profilePicture} />
         <Box
           component="main"
           sx={{
@@ -84,7 +104,7 @@ export default function AccountView() {
                     height: 240,
                   }}
                 >
-                  <Deposits balance={account!!.balance ?? 0} />
+                  <Deposits balance={balance} />
                 </Paper>
               </Grid>
               {/* Recent Orders */}
