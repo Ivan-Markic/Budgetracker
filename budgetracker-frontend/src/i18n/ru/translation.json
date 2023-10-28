@@ -50,5 +50,6 @@
   "save": "Сохранить",
   "add_account": "Добавить аккаунт",
   "initial_balance": "Начальный баланс",
-  "account_name": "Имя аккаунта"
+  "account_name": "Имя аккаунта",
+  "delete": "Удалить"
 }

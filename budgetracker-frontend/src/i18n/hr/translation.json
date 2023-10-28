@@ -50,5 +50,6 @@
   "save": "Spremi",
   "add_account": "Novi račun",
   "initial_balance": "Početno stanje",
-  "account_name": "Ime računa"
+  "account_name": "Ime računa",
+  "delete": "Obriši"
 }

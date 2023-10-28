@@ -55,7 +55,7 @@ export function AdminPanel() {
           onClick={() => handleDeleteUser(params.row.id)}
           style={{ backgroundColor: "red", color: "white" }}
         >
-          Delete
+          {t("delete")}
         </Button>
       ),
     },

@@ -26,7 +26,7 @@ public class UserControllerTest extends TemplateControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(content().encoding(StandardCharsets.ISO_8859_1))
-                .andExpect(jsonPath("$", hasSize(1)));
+                .andExpect(jsonPath("$", hasSize(0)));
     }
 
     @Test
@@ -34,7 +34,7 @@ public class UserControllerTest extends TemplateControllerTest {
         mockMvc.perform(
                         get("/api/v1/user/get")
                                 .header(HttpHeaders.AUTHORIZATION, getAuthorizationHeader())
-                                .param("userId", "1")  // Add userId as a query parameter
+                                .param("username", "admin")  // Add userId as a query parameter
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())

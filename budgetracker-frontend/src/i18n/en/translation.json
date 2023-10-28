@@ -50,5 +50,6 @@
   "save": "Save",
   "add_account": "Add Account",
   "initial_balance": "Initial Balance",
-  "account_name": "Account Name"
+  "account_name": "Account Name",
+  "delete": "Delete"
 }

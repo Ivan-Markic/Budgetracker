@@ -16,7 +16,6 @@ import { User } from "../model/User";
 import { createUserFromResponse } from "../utils/userUtils";
 import { Role } from "../model/Role";
 import i18n from "../i18n/config";
-import { generateRandomString } from "../utils/mathUtils";
 import Copyright from "./Copyright";
 
 function renderImage(image: any) {
@@ -35,10 +34,10 @@ function renderImage(image: any) {
 
 function SignUp() {
   const [formData, setFormData] = useState({
-    firstName: generateRandomString(10),
-    lastName: generateRandomString(10),
-    username: generateRandomString(10),
-    password: generateRandomString(10),
+    firstName: "",
+    lastName: "",
+    username: "",
+    password: "",
   });
   const [formErrors, setFormErrors] = useState({
     firstName: false,
